@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -20,6 +21,13 @@ type apiConfig struct {
 }
 
 func main() {
+	// // testing
+	// feed, err := urlToFeed("https://rothbardbrasil.com/feed/")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(feed)
+
 	fmt.Println("RSS Aggregator")
 
 	godotenv.Load()
@@ -39,6 +47,13 @@ func main() {
 		log.Fatal("Unable to connect to database:", err)
 	}
 
+	db := database.New(conn)
+	apiCfg := apiConfig{
+		DB: db,
+	}
+
+	go startScraping(db, 10, time.Minute)
+
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
@@ -50,10 +65,6 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	apiCfg := apiConfig{
-		DB: database.New(conn),
-	}
-
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/error", handlerError)
@@ -64,6 +75,7 @@ func main() {
 	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
 	v1Router.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
 	v1Router.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollows))
+	v1Router.Get("/posts", apiCfg.middlewareAuth(apiCfg.handlerGetPostsForUser))
 
 	router.Mount("/v1", v1Router)
 
