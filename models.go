@@ -104,6 +104,7 @@ func databasePostToPost(dbPost database.Post) Post {
 		Description: description,
 		PublishedAt: dbPost.PublishedAt,
 		FeedID:      dbPost.FeedID,
+		Url:         dbPost.Url,
 	}
 }
 

@@ -48,7 +48,7 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 
 	rssFeed, err := urlToFeed(feed.Url)
 	if err != nil {
-		log.Println("Error fetching feed:", err)
+		log.Println("error fetching feed:", err)
 		return
 	}
 

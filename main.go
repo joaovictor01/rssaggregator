@@ -21,13 +21,6 @@ type apiConfig struct {
 }
 
 func main() {
-	// // testing
-	// feed, err := urlToFeed("https://rothbardbrasil.com/feed/")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(feed)
-
 	fmt.Println("RSS Aggregator")
 
 	godotenv.Load()
