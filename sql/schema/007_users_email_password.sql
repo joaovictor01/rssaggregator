@@ -1,0 +1,7 @@
+-- +goose Up
+ALTER TABLE users ADD COLUMN email VARCHAR(64) UNIQUE NOT NULL DEFAULT '';
+ALTER TABLE users ADD COLUMN password VARCHAR(64) NOT NULL DEFAULT '';
+
+-- +goose Down
+ALTER TABLE users DROP COLUMN email;
+ALTER TABLE users DROP COLUMN password;
